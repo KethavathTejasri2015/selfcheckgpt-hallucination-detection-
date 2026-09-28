@@ -1,0 +1,6 @@
+aiohttp
+nltk
+openai
+python-dotenv
+pytest
+tenacity
