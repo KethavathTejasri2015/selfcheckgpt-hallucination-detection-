@@ -47,3 +47,8 @@ if __name__ == "__main__":
     
     score = score_sentence(sentence, samples, mock_evaluator)
     print("Score:", score)
+def score_sentences(sentences, samples, evaluator):
+    return [
+        score_sentence(sentence, samples, evaluator)
+        for sentence in sentences
+    ]
