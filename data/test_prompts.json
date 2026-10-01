@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "prompt": "Write a short Wikipedia-style biography of the American architect Henry Hobson Richardson.",
+    "topic": "Henry Hobson Richardson",
+    "expected_focus": "Verify birthplace, education, major architectural works, and dates."
+  },
+  {
+    "id": 2,
+    "prompt": "Write a short Wikipedia-style biography of the British mathematician Mary Cartwright.",
+    "topic": "Mary Cartwright",
+    "expected_focus": "Verify mathematical contributions, education, academic positions, and dates."
+  },
+  {
+    "id": 3,
+    "prompt": "Write a short Wikipedia-style biography of the French painter Jean-Baptiste-Camille Corot.",
+    "topic": "Jean-Baptiste-Camille Corot",
+    "expected_focus": "Verify artistic movement, training, major works, and chronology."
+  },
+  {
+    "id": 4,
+    "prompt": "Write a short Wikipedia-style biography of the American chemist Alice Ball.",
+    "topic": "Alice Ball",
+    "expected_focus": "Verify education, research on chaulmoogra oil, institutions, and dates."
+  },
+  {
+    "id": 5,
+    "prompt": "Write a short Wikipedia-style biography of the Indian physicist Meghnad Saha.",
+    "topic": "Meghnad Saha",
+    "expected_focus": "Verify education, ionization equation, academic positions, and dates."
+  },
+  {
+    "id": 6,
+    "prompt": "Write a short Wikipedia-style biography of the British archaeologist Kathleen Kenyon.",
+    "topic": "Kathleen Kenyon",
+    "expected_focus": "Verify archaeological excavations, locations, institutions, and chronology."
+  },
+  {
+    "id": 7,
+    "prompt": "Write a short Wikipedia-style biography of the American astronomer Annie Jump Cannon.",
+    "topic": "Annie Jump Cannon",
+    "expected_focus": "Verify stellar classification work, Harvard involvement, education, and dates."
+  },
+  {
+    "id": 8,
+    "prompt": "Write a short Wikipedia-style biography of the Japanese chemist Hideki Yukawa.",
+    "topic": "Hideki Yukawa",
+    "expected_focus": "Verify meson theory, Nobel Prize, institutions, and dates."
+  },
+  {
+    "id": 9,
+    "prompt": "Write a short Wikipedia-style biography of the British computer scientist David Wheeler.",
+    "topic": "David Wheeler",
+    "expected_focus": "Verify contributions to computing, academic positions, and chronology."
+  },
+  {
+    "id": 10,
+    "prompt": "Write a short Wikipedia-style biography of the American mathematician Emmy Noether.",
+    "topic": "Emmy Noether",
+    "expected_focus": "Verify mathematical contributions, institutions, education, and dates."
+  },
+  {
+    "id": 11,
+    "prompt": "Write a short Wikipedia-style biography of the Indian botanist Janaki Ammal.",
+    "topic": "Janaki Ammal",
+    "expected_focus": "Verify botanical research, genetics work, institutions, and dates."
+  },
+  {
+    "id": 12,
+    "prompt": "Write a short Wikipedia-style biography of the British paleontologist Mary Anning.",
+    "topic": "Mary Anning",
+    "expected_focus": "Verify fossil discoveries, locations, scientific recognition, and chronology."
+  },
+  {
+    "id": 13,
+    "prompt": "Write a short Wikipedia-style biography of the American inventor Granville Woods.",
+    "topic": "Granville Woods",
+    "expected_focus": "Verify inventions, electrical engineering contributions, patents, and dates."
+  },
+  {
+    "id": 14,
+    "prompt": "Write a short Wikipedia-style biography of the Polish-American physicist Marian Smoluchowski.",
+    "topic": "Marian Smoluchowski",
+    "expected_focus": "Verify physics contributions, academic positions, education, and dates."
+  },
+  {
+    "id": 15,
+    "prompt": "Write a short Wikipedia-style biography of the British statistician Florence Nightingale.",
+    "topic": "Florence Nightingale",
+    "expected_focus": "Verify statistical contributions, nursing work, institutions, and chronology."
+  }
+]
