@@ -33,7 +33,8 @@ class LLMGenerator:
         self.model_name = model_name
 
         self.client = AsyncOpenAI(
-            api_key=get_api_key()
+            api_key=get_api_key(),
+            base_url="https://api.groq.com/openai/v1",
         )
 
         self.semaphore = asyncio.Semaphore(

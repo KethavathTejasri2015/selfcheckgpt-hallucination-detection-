@@ -40,7 +40,8 @@ class SelfCheckPipeline:
         # Person 2's eval_prompt.py expects a normal synchronous
         # evaluator(prompt) -> response callback.
         self.prompt_client = OpenAI(
-            api_key=get_api_key()
+            api_key=get_api_key(),
+            base_url="https://api.groq.com/openai/v1",
         )
 
     def _prompt_evaluator(self, prompt: str) -> str:
