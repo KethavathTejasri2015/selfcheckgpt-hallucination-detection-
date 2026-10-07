@@ -1,26 +1,25 @@
 import os
-from pathlib import Path
 
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 
-BASE_DIR = Path(__file__).resolve().parent
-ENV_FILE = BASE_DIR / ".env"
-
-_config = dotenv_values(ENV_FILE)
+load_dotenv()
 
 
 def get_api_key() -> str:
-    api_key = _config.get("GROQ_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY")
 
     if not api_key:
         raise RuntimeError(
             "GROQ_API_KEY is not set. "
-            "Please check the .env file."
+            "Please create a .env file."
         )
 
     return api_key
 
 
 def get_model_name() -> str:
-    return _config.get("MODEL_NAME", "openai/gpt-oss-20b")
+    return os.getenv(
+        "MODEL_NAME",
+        "llama-3.3-70b-versatile"
+    )
