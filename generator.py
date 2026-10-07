@@ -1,10 +1,10 @@
 import asyncio
 import logging
 
-from openai import (
+from groq import (
     APIConnectionError,
     APITimeoutError,
-    AsyncOpenAI,
+    AsyncGroq,
     InternalServerError,
     RateLimitError,
 )
@@ -32,7 +32,7 @@ class LLMGenerator:
     ):
         self.model_name = model_name
 
-        self.client = AsyncOpenAI(
+        self.client = AsyncGroq(
             api_key=get_api_key()
         )
 
@@ -67,9 +67,6 @@ class LLMGenerator:
         self,
         prompt: str,
     ) -> str:
-        """
-        Generate the main deterministic response.
-        """
 
         logger.info("Generating main response")
 
@@ -82,6 +79,7 @@ class LLMGenerator:
                 }
             ],
             temperature=0.0,
+            include_reasoning=False,
         )
 
         content = response.choices[0].message.content
@@ -115,11 +113,9 @@ class LLMGenerator:
         self,
         prompt: str,
     ) -> str:
-        """
-        Generate one stochastic sample.
-        """
 
         async with self.semaphore:
+
             response = await self.client.chat.completions.create(
                 model=self.model_name,
                 messages=[
@@ -129,6 +125,7 @@ class LLMGenerator:
                     }
                 ],
                 temperature=1.0,
+                include_reasoning=False,
             )
 
         content = response.choices[0].message.content
@@ -145,9 +142,6 @@ class LLMGenerator:
         prompt: str,
         num_samples: int,
     ) -> list[str]:
-        """
-        Generate 4 to 20 stochastic samples concurrently.
-        """
 
         if not 4 <= num_samples <= 20:
             raise ValueError(
@@ -177,9 +171,6 @@ class LLMGenerator:
         prompt: str,
         num_samples: int,
     ) -> dict:
-        """
-        Run the complete generation pipeline.
-        """
 
         logger.info("Starting complete generation pipeline")
 
