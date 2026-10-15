@@ -5,7 +5,8 @@ import html
 
 import streamlit as st
 
-from config import get_model_name
+from config import get_model_name, get_api_key
+from groq import Groq
 from generator import LLMGenerator
 from scorer import SelfCheckEvaluator
 
@@ -468,20 +469,67 @@ if st.button(
 
                     if scoring_method == "prompt":
 
-                        st.warning(
-                            "Prompt-based scoring requires an "
-                            "evaluator callback from the backend. "
-                            "Please use NLI or N-gram unless the "
-                            "prompt evaluator is configured."
+                        prompt_client = Groq(
+                            api_key=get_api_key()
                         )
 
-                        st.stop()
+                        def prompt_evaluator(
+                            evaluation_prompt: str
+                        ) -> str:
 
-                    evaluation = evaluator.evaluate(
-                        sentences=sentences,
-                        samples=stochastic_samples,
-                        method=scoring_method
-                    )
+                            response = (
+                                prompt_client.chat.completions.create(
+                                    model=get_model_name(),
+                                    messages=[
+                                        {
+                                            "role": "system",
+                                            "content": (
+                                                "You are a factual-support "
+                                                "evaluator. Examine the "
+                                                "sentence and context. "
+                                                "Answer Yes only if the "
+                                                "context supports the "
+                                                "sentence's claims. Answer "
+                                                "No if the claims are "
+                                                "unsupported or contradicted. "
+                                                "Output only Yes or No."
+                                            ),
+                                        },
+                                        {
+                                            "role": "user",
+                                            "content": evaluation_prompt,
+                                        },
+                                    ],
+                                    temperature=0.0,
+                                )
+                            )
+
+                            content = (
+                                response.choices[0].message.content
+                            )
+
+                            if not content:
+                                raise RuntimeError(
+                                    "Prompt evaluator returned "
+                                    "an empty response."
+                                )
+
+                            return content.strip()
+
+                        evaluation = evaluator.evaluate(
+                            sentences=sentences,
+                            samples=stochastic_samples,
+                            method="prompt",
+                            evaluator_fn=prompt_evaluator,
+                        )
+
+                    else:
+
+                        evaluation = evaluator.evaluate(
+                            sentences=sentences,
+                            samples=stochastic_samples,
+                            method=scoring_method
+                        )
 
                 sentence_scores = (
                     evaluation["sentence_scores"]
