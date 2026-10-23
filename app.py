@@ -1,12 +1,12 @@
-
 import asyncio
-import time
 import html
+import time
 
 import streamlit as st
 
 from config import get_model_name
-from generator import LLMGenerator
+from eval_ngram import tokenize
+from integration import SelfCheckPipeline
 from scorer import SelfCheckEvaluator
 
 
@@ -31,12 +31,24 @@ st.write(
 # ---------------------------------------------------------
 # Backend components
 # ---------------------------------------------------------
+# Only the evaluator is cached. It holds the heavy NLI model, which
+# must not be reloaded on every Streamlit rerun.
+#
+# The pipeline (async Groq client + semaphore) is created per click,
+# because each asyncio.run() call uses a fresh event loop and async
+# clients must not be reused across loops.
 
-generator = LLMGenerator(
-    model_name=get_model_name()
-)
+@st.cache_resource(show_spinner=False)
+def get_evaluator() -> SelfCheckEvaluator:
+    return SelfCheckEvaluator()
 
-evaluator = SelfCheckEvaluator()
+
+def build_pipeline() -> SelfCheckPipeline:
+    pipeline = SelfCheckPipeline(
+        model_name=get_model_name()
+    )
+    pipeline.evaluator = get_evaluator()
+    return pipeline
 
 
 # ---------------------------------------------------------
@@ -103,27 +115,17 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
 
-    temperature = st.slider(
-        "Temperature",
-        min_value=0.0,
-        max_value=1.0,
-        value=1.0,
-        step=0.1
-    )
-
-
-with col2:
-
     samples = st.slider(
         "Number of Samples",
         min_value=4,
         max_value=20,
         value=5,
-        step=1
+        step=1,
+        help="Stochastic samples are generated at temperature 1.0."
     )
 
 
-with col3:
+with col2:
 
     method = st.selectbox(
         "Evaluation Method",
@@ -132,6 +134,18 @@ with col3:
             "Prompt-based",
             "N-gram"
         ]
+    )
+
+
+with col3:
+
+    threshold = st.slider(
+        "Safe Answer Threshold",
+        min_value=0.2,
+        max_value=0.9,
+        value=0.66,
+        step=0.05,
+        help="Sentences scoring above this are removed from the Safe Answer."
     )
 
 
@@ -181,6 +195,26 @@ DEMO_SCORES = [
 
 
 # ---------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------
+
+def risk_class(score: float) -> str:
+    if score > 0.66:
+        return "high"
+    if score >= 0.33:
+        return "medium"
+    return "low"
+
+
+def risk_label(score: float) -> str:
+    if score > 0.66:
+        return "🔴 High"
+    if score >= 0.33:
+        return "🟡 Moderate"
+    return "🟢 Low"
+
+
+# ---------------------------------------------------------
 # Highlighting function
 # ---------------------------------------------------------
 
@@ -192,17 +226,8 @@ def display_highlighted_response(sentences, scores):
 
         safe_sentence = html.escape(sentence)
 
-        if score > 0.66:
-            css_class = "high"
-
-        elif score >= 0.33:
-            css_class = "medium"
-
-        else:
-            css_class = "low"
-
         highlighted_sentences.append(
-            f'<span class="sentence {css_class}" '
+            f'<span class="sentence {risk_class(score)}" '
             f'title="Hallucination score: {score:.2f}">'
             f'{safe_sentence}'
             f'</span>'
@@ -229,6 +254,107 @@ def display_highlighted_response(sentences, scores):
 
 
 # ---------------------------------------------------------
+# Safe Answer (mitigation step, not part of the original paper)
+# ---------------------------------------------------------
+
+def display_safe_answer(sentences, scores, limit):
+
+    kept = [
+        s for s, sc in zip(sentences, scores) if sc <= limit
+    ]
+
+    removed = [
+        (s, sc) for s, sc in zip(sentences, scores) if sc > limit
+    ]
+
+    st.subheader("Safe Answer")
+
+    st.caption(
+        f"Sentences scoring above {limit:.2f} are removed. "
+        f"Kept {len(kept)} of {len(sentences)}."
+    )
+
+    if kept:
+        st.success(" ".join(kept))
+    else:
+        st.warning(
+            "Every sentence was flagged. "
+            "No safe answer can be produced at this threshold."
+        )
+
+    if removed:
+        with st.expander(f"View {len(removed)} removed sentence(s)"):
+            for sentence, score in removed:
+                st.write(f"🔴 **{score:.2f}** — {sentence}")
+
+
+# ---------------------------------------------------------
+# Evidence view (explains WHY a sentence was flagged)
+# ---------------------------------------------------------
+
+STOPWORDS = {
+    "the", "a", "an", "is", "are", "was", "were", "of", "in", "on",
+    "to", "and", "or", "it", "its", "that", "this", "for", "with",
+    "as", "by", "at", "from", "be", "has", "have", "had", "also"
+}
+
+
+def content_words(text):
+    return {t for t in tokenize(text) if t not in STOPWORDS}
+
+
+def support_ratio(sentence, sample):
+    words = content_words(sentence)
+    if not words:
+        return 0.0
+    return len(words & content_words(sample)) / len(words)
+
+
+def display_evidence(sentences, scores, stochastic_samples, limit):
+
+    flagged = [
+        (s, sc) for s, sc in zip(sentences, scores) if sc > limit
+    ]
+
+    st.subheader("Evidence")
+
+    if not flagged:
+        st.success("No sentence was flagged, so there is nothing to explain.")
+        return
+
+    st.caption(
+        "A sample 'supports' a sentence if it shares at least 50% of the "
+        "sentence's key words (a simple word-overlap check)."
+    )
+
+    for sentence, score in flagged:
+
+        ratios = [
+            support_ratio(sentence, sample)
+            for sample in stochastic_samples
+        ]
+
+        supporting = sum(1 for r in ratios if r >= 0.5)
+        best_index = max(range(len(ratios)), key=lambda i: ratios[i])
+
+        st.error(f"🔴 {sentence}  (score {score:.2f})")
+
+        st.write(
+            f"**{supporting} of {len(stochastic_samples)}** samples "
+            f"support this sentence."
+        )
+
+        st.progress(supporting / len(stochastic_samples))
+
+        with st.expander("Closest sample"):
+            st.caption(
+                f"Sample {best_index + 1} — "
+                f"{ratios[best_index]:.0%} word overlap"
+            )
+            st.write(stochastic_samples[best_index])
+
+
+# ---------------------------------------------------------
 # Result display function
 # ---------------------------------------------------------
 
@@ -248,7 +374,6 @@ def display_results(
 
     st.info(
         f"Method: {method_name}  |  "
-        f"Temperature: {temperature:.1f}  |  "
         f"Samples: {len(stochastic_samples)}"
     )
 
@@ -264,22 +389,13 @@ def display_results(
     )
 
     if passage_score < 0.33:
-
-        st.success(
-            "🟢 Low likelihood of hallucination"
-        )
+        st.success("🟢 Low likelihood of hallucination")
 
     elif passage_score <= 0.66:
-
-        st.warning(
-            "🟡 Moderate likelihood of hallucination"
-        )
+        st.warning("🟡 Moderate likelihood of hallucination")
 
     else:
-
-        st.error(
-            "🔴 High likelihood of hallucination"
-        )
+        st.error("🔴 High likelihood of hallucination")
 
     # -----------------------------------------------------
     # Highlighted response
@@ -293,6 +409,27 @@ def display_results(
     )
 
     # -----------------------------------------------------
+    # Safe answer
+    # -----------------------------------------------------
+
+    display_safe_answer(
+        sentences,
+        sentence_scores,
+        threshold
+    )
+
+    # -----------------------------------------------------
+    # Evidence
+    # -----------------------------------------------------
+
+    display_evidence(
+        sentences,
+        sentence_scores,
+        stochastic_samples,
+        threshold
+    )
+
+    # -----------------------------------------------------
     # Score table
     # -----------------------------------------------------
 
@@ -303,17 +440,8 @@ def display_results(
         start=1
     ):
 
-        if score > 0.66:
-            label = "🔴 High"
-
-        elif score >= 0.33:
-            label = "🟡 Moderate"
-
-        else:
-            label = "🟢 Low"
-
         st.write(
-            f"**Sentence {index} — {label} — "
+            f"**Sentence {index} — {risk_label(score)} — "
             f"Score: {score:.2f}**"
         )
 
@@ -323,10 +451,7 @@ def display_results(
     # Raw response
     # -----------------------------------------------------
 
-    with st.expander(
-        "View plain generated response"
-    ):
-
+    with st.expander("View plain generated response"):
         st.write(response)
 
     # -----------------------------------------------------
@@ -342,9 +467,7 @@ def display_results(
             start=1
         ):
 
-            st.markdown(
-                f"**Sample {i}**"
-            )
+            st.markdown(f"**Sample {i}**")
 
             st.write(sample)
 
@@ -394,11 +517,8 @@ if st.button(
                     time.sleep(0.5)
 
                     response = DEMO_RESPONSE
-
                     sentences = DEMO_SENTENCES
-
                     stochastic_samples = DEMO_SAMPLES
-
                     sentence_scores = DEMO_SCORES
 
                     passage_score = round(
@@ -407,9 +527,7 @@ if st.button(
                         4
                     )
 
-                execution_time = (
-                    time.time() - start_time
-                )
+                execution_time = time.time() - start_time
 
                 display_results(
                     response=response,
@@ -433,74 +551,30 @@ if st.button(
                     "N-gram": "unigram"
                 }
 
-                scoring_method = method_map[
-                    method
-                ]
+                scoring_method = method_map[method]
 
-                # ---------------------------------------------
-                # Generate response
-                # ---------------------------------------------
+                pipeline = build_pipeline()
 
                 with st.spinner(
-                    "Generating response and stochastic samples..."
+                    f"Generating response and scoring with {method}..."
                 ):
 
                     result = asyncio.run(
-                        generator.generate_all(
-                            prompt,
-                            samples
+                        pipeline.generate_and_score(
+                            prompt=prompt,
+                            num_samples=samples,
+                            method=scoring_method
                         )
                     )
 
-                response = result["response"]
-
-                sentences = result["sentences"]
-
-                stochastic_samples = result["samples"]
-
-                # ---------------------------------------------
-                # Evaluation
-                # ---------------------------------------------
-
-                with st.spinner(
-                    f"Calculating {method} hallucination scores..."
-                ):
-
-                    if scoring_method == "prompt":
-
-                        st.warning(
-                            "Prompt-based scoring requires an "
-                            "evaluator callback from the backend. "
-                            "Please use NLI or N-gram unless the "
-                            "prompt evaluator is configured."
-                        )
-
-                        st.stop()
-
-                    evaluation = evaluator.evaluate(
-                        sentences=sentences,
-                        samples=stochastic_samples,
-                        method=scoring_method
-                    )
-
-                sentence_scores = (
-                    evaluation["sentence_scores"]
-                )
-
-                passage_score = (
-                    evaluation["passage_score"]
-                )
-
-                execution_time = (
-                    time.time() - start_time
-                )
+                execution_time = time.time() - start_time
 
                 display_results(
-                    response=response,
-                    sentences=sentences,
-                    stochastic_samples=stochastic_samples,
-                    sentence_scores=sentence_scores,
-                    passage_score=passage_score,
+                    response=result["response"],
+                    sentences=result["sentences"],
+                    stochastic_samples=result["samples"],
+                    sentence_scores=result["sentence_scores"],
+                    passage_score=result["passage_score"],
                     method_name=method,
                     execution_time=execution_time
                 )
@@ -517,8 +591,5 @@ if st.button(
                 "backend configuration."
             )
 
-            with st.expander(
-                "Technical error details"
-            ):
-
+            with st.expander("Technical error details"):
                 st.exception(e)

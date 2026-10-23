@@ -133,7 +133,10 @@ def parse_prompt_response(response, expected_count):
     if len(matches) == expected_count:
         return [float(value) for value in matches]
 
-    return [0.5] * expected_count
+    raise ValueError(
+        f"Invalid prompt scorer response: expected "
+        f"{expected_count} scores, got {len(matches)}"
+    )
 
 
 def run_prompt_score(sentences, samples):
@@ -197,7 +200,7 @@ def run_prompt_score(sentences, samples):
 
             error_text = str(error)
 
-            if "429" not in error_text:
+            if "429" not in error_text and not isinstance(error, ValueError):
                 raise
 
             if attempt == MAX_RETRIES:
@@ -255,6 +258,28 @@ def validate_scores(result, expected_sentence_count):
             f"Invalid passage score: {passage_score}"
         )
 
+async def generate_with_retries(generate_func, *args):
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            result = await generate_func(*args)
+
+            if result and (
+                not isinstance(result, str) or result.strip()
+            ):
+                return result
+
+            raise RuntimeError("Model returned an empty response.")
+
+        except Exception as error:
+            if attempt == MAX_RETRIES:
+                raise
+
+            wait_time = RETRY_WAIT_SECONDS * attempt
+            print(
+                f"Generation failed ({attempt}/{MAX_RETRIES}): "
+                f"{error}. Retrying in {wait_time}s..."
+            )
+            await asyncio.sleep(wait_time)
 
 # ============================================================
 # MAIN BENCHMARK
@@ -321,7 +346,8 @@ async def run_benchmark():
             # GENERATE MAIN RESPONSE
             # ------------------------------------------------
 
-            passage = await generator.generate_main_response(
+            passage = await generate_with_retries(
+                generator.generate_main_response,
                 prompt_text
             )
 
@@ -334,11 +360,10 @@ async def run_benchmark():
             # GENERATE SAMPLES
             # ------------------------------------------------
 
-            samples = (
-                await generator.generate_stochastic_samples(
-                    prompt_text,
-                    NUM_SAMPLES
-                )
+            samples = await generate_with_retries(
+                generator.generate_stochastic_samples,
+                prompt_text,
+                NUM_SAMPLES
             )
 
             if not samples:
@@ -373,9 +398,9 @@ async def run_benchmark():
             # UNIGRAM
             # ------------------------------------------------
 
-            print(
-                "Running Unigram scorer..."
-            )
+            print("Running Unigram scorer...")
+
+            start_time = time.perf_counter()
 
             unigram_result = evaluator.evaluate(
                 sentences=sentences,
@@ -383,46 +408,43 @@ async def run_benchmark():
                 method="unigram"
             )
 
-            validate_scores(
-                unigram_result,
-                len(sentences)
-            )
+            unigram_time = time.perf_counter() - start_time
+
+            validate_scores(unigram_result, len(sentences))
 
             print(
-                "Unigram passage score: "
+                f"Unigram passage score: "
                 f"{unigram_result['passage_score']:.4f}"
             )
+            print(f"Unigram time: {unigram_time:.2f} seconds")
 
             # ------------------------------------------------
             # PROMPT
             # ------------------------------------------------
 
-            print(
-                "Running Prompt scorer..."
-            )
+            print("Running Prompt scorer...")
 
-            prompt_result = run_prompt_score(
-                sentences,
-                samples
-            )
+            start_time = time.perf_counter()
 
-            validate_scores(
-                prompt_result,
-                len(sentences)
-            )
+            prompt_result = run_prompt_score(sentences, samples)
+
+            prompt_time = time.perf_counter() - start_time
+
+            validate_scores(prompt_result, len(sentences))
 
             print(
-                "Prompt passage score: "
+                f"Prompt passage score: "
                 f"{prompt_result['passage_score']:.4f}"
             )
+            print(f"Prompt time: {prompt_time:.2f} seconds")
 
             # ------------------------------------------------
             # NLI
             # ------------------------------------------------
 
-            print(
-                "Running NLI scorer..."
-            )
+            print("Running NLI scorer...")
+
+            start_time = time.perf_counter()
 
             nli_result = evaluator.evaluate(
                 sentences=sentences,
@@ -430,15 +452,15 @@ async def run_benchmark():
                 method="nli"
             )
 
-            validate_scores(
-                nli_result,
-                len(sentences)
-            )
+            nli_time = time.perf_counter() - start_time
+
+            validate_scores(nli_result, len(sentences))
 
             print(
-                "NLI passage score: "
+                f"NLI passage score: "
                 f"{nli_result['passage_score']:.4f}"
             )
+            print(f"NLI time: {nli_time:.2f} seconds")
 
             # ------------------------------------------------
             # SAVE RESULT
@@ -456,9 +478,13 @@ async def run_benchmark():
                     "unigram": unigram_result,
                     "prompt": prompt_result,
                     "nli": nli_result
+                },
+                "times": {
+                    "unigram": unigram_time,
+                    "prompt": prompt_time,
+                    "nli": nli_time
                 }
             }
-
             all_results.append(result)
 
             print(
@@ -473,16 +499,9 @@ async def run_benchmark():
             )
 
         except Exception as error:
-
-            print(
-                f"ERROR: {error}"
-            )
-
-            print(
-                "Stopping benchmark."
-            )
-
-            break
+            print(f"ERROR: {error}")
+            print(f"Skipping prompt: {topic}")
+            continue
 
     # --------------------------------------------------------
     # FINAL SAVE
@@ -524,6 +543,8 @@ async def run_benchmark():
             for item in all_results
         ]
 
+        
+
         print(
             f"Average Unigram score: "
             f"{mean(unigram_scores):.4f}"
@@ -537,6 +558,21 @@ async def run_benchmark():
         print(
             f"Average NLI score: "
             f"{mean(nli_scores):.4f}"
+        )
+
+        print(
+            f"Average Unigram time: "
+            f"{mean(item['times']['unigram'] for item in all_results):.2f} seconds"
+        )
+
+        print(
+            f"Average Prompt time: "
+            f"{mean(item['times']['prompt'] for item in all_results):.2f} seconds"
+        )
+
+        print(
+            f"Average NLI time: "
+            f"{mean(item['times']['nli'] for item in all_results):.2f} seconds"
         )
 
     print()

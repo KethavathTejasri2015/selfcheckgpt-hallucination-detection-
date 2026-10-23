@@ -1,0 +1,114 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "num_prompts": 15,
+  "num_samples": 4,
+  "completed_prompts": 1,
+  "results": [
+    {
+      "id": 1,
+      "topic": "Henry Hobson Richardson",
+      "prompt": "Write a short Wikipedia-style biography of the American architect Henry Hobson Richardson.",
+      "expected_focus": "Verify birthplace, education, major architectural works, and dates.",
+      "generated_passage": "**Henry Hobson Richardson** (March 13, 1838 – April 18, 1886) was an influential American architect whose work helped define the architectural landscape of the late nineteenth century. He is best known for developing the Richardsonian Romanesque style, a robust, stone‑based aesthetic that combined medieval European motifs with modern American sensibilities.\n\n---\n\n### Early life and education\n\nRichardson was born in Boston, Massachusetts, into a family of modest means. He attended the Boston Latin School and later studied at the Massachusetts Institute of Technology, where he earned a degree in civil engineering in 1859. After a brief stint as a civil engineer, he turned to architecture, apprenticing under the prominent Boston firm of Peabody & Stearns.\n\n### Career\n\nRichardson’s early work in Boston included the design of the Boston Public Library (1872–1875), a landmark that showcased his emerging preference for heavy stone construction and rounded arches. His reputation grew rapidly, and he soon received commissions across the United States, including the Trinity Church in Boston (1877–1886), the Marshall Field & Company Building in Chicago (1884–1885), and the Allegheny County Courthouse in Pittsburgh (1884–1888).\n\nHis signature style—later termed Richardsonian Romanesque—was characterized by massive stone walls, deeply recessed windows, and a sense of weighty solidity. Richardson’s designs often incorporated asymmetrical massing and a blend of Romanesque and Gothic elements, creating a distinctly American interpretation of medieval European architecture.\n\n### Major works\n\n- **Boston Public Library** (1872–1875) – A pioneering public building that combined functionality with monumental design.\n- **Trinity Church, Boston** (1877–1886) – A masterwork that exemplified Richardson’s Romanesque approach.\n- **Marshall Field & Company Building, Chicago** (1884–1885) – One of the first skyscrapers to incorporate Richardsonian Romanesque detailing.\n- **Allegheny County Courthouse, Pittsburgh** (1884–1888) – A civic building that showcased Richardson’s mastery of stone and form.\n\n### Influence and legacy\n\nRichardson’s work had a profound impact on American architecture, inspiring a generation of architects, including Frank Lloyd Wright and Louis Sullivan. His emphasis on structural honesty and the use of local materials helped shape the development of the American architectural identity in the post‑Civil War era. The Richardsonian Romanesque style remained popular into the early twentieth century, especially for civic and institutional buildings.\n\n### Death\n\nHenry Hobson Richardson died of a heart attack on April 18, 1886, in Boston, at the age of 48. His sudden death left many of his projects unfinished, but his influence continued to resonate throughout the architectural profession.\n\n### References\n\n* Richardson, H. H. (1886). *The Architecture of Henry Hobson Richardson*. Boston: Houghton Mifflin.\n* Smith, J. L. (1992). *American Romanesque: The Legacy of H. H. Richardson*. New York: Oxford University Press.\n\n---",
+      "generated_samples": [
+        "**Henry Hobson Richardson** (April 27, 1838 – October 12, 1886) was an influential American architect whose work helped shape the architectural landscape of late‑19th‑century New England. Born in Brookline, Massachusetts, Richardson studied at Harvard College before turning to architecture, apprenticing with John F. R. White and later working with the firm of H. H. Richardson & Co. His early practice, established in Boston in 1862, quickly earned a reputation for precision and craftsmanship.\n\nRichardson is best known for pioneering the *Richardsonian Romanesque* style, characterized by massive stone walls, rounded arches, and a strong sense of weight and solidity. His most celebrated commissions include the *Trinity Church* (Boston, 1877), the *Warren Library* (Philadelphia, 1881), and the *Marble House* (New York City, 1885). These works combined a robust Romanesque vocabulary with innovative use of light and texture, influencing a generation of architects across the United States.\n\nHe served as the supervising architect for the Boston Public Library (1885–1886) and designed numerous civic and private buildings until his untimely death from typhoid fever at the age of 48. Richardson’s legacy endures through the continued study and preservation of his buildings, many of which are listed on the National Register of Historic Places. His contributions are considered pivotal in the transition from Victorian eclecticism to the more restrained and historically informed architectural movements of the twentieth century.",
+        "**Henry Hobson Richardson** (March 17, 1838 – July 25, 1886) was an American architect who played a pivotal role in shaping late‑19th‑century civic and ecclesiastical architecture in the United States. He is best known for developing the distinctive **Richardsonian Romanesque** style, characterized by massive stone walls, rounded arches, and a sense of robust, almost sculptural solidity.\n\n### Early life and education\nRichardson was born in Boston, Massachusetts, into a family of modest means. He received his early training in Boston’s architectural offices, notably under Henry S. Warren, before pursuing further study at the École des Beaux‑Arts and the Royal Academy in Paris. Exposure to the works of Eugène Viollet-le-Duc and medieval Romanesque architecture profoundly shaped his aesthetic sensibilities.\n\n### Architectural career\nAfter returning to Boston in the early 1860s, Richardson established his own practice, quickly gaining commissions for churches and civic buildings. His breakthrough came with the design of **Trinity Church (Boston)** (1864‑1866), a landmark that combined a soaring granite nave with a distinctive, tiered tower. The success of Trinity Church launched a prolific period during which he undertook projects across the Northeast and West Coast, including the **Allegheny County Courthouse (Pittsburgh)**, the **Brown Palace Hotel (Denver)**, and the **Cleveland City Hall**.\n\nRichardson’s work was notable for its rigorous use of stone and his innovative integration of medieval forms with modern functional requirements. He was also a mentor to a generation of architects and a founding member of the American Institute of Architects. His prolific output—over 90 major commissions—cemented his reputation as one of the preeminent American architects of his era.\n\n### Legacy\nThe **Richardsonian Romanesque** style influenced countless public and private structures into the early 20th century, leaving a lasting imprint on American urban landscapes. Richardson’s emphasis on structural honesty, material integrity, and architectural expression paved the way for modernist movements that followed. He died in 1886 at the age of 48, reportedly of tuberculosis, leaving behind a legacy that continues to be celebrated in architectural scholarship and by preservationists worldwide.",
+        "**Henry Hobson Richardson** (September 17, 1838 – April 9, 1886) was a pioneering American architect whose work defined the *Richardsonian Romanesque* style and left a lasting imprint on the architectural landscape of the United States. His buildings, characterized by heavy stone construction, rounded arches, and monumental proportions, were widely emulated and remain celebrated for their sculptural quality and craftsmanship.\n\n---\n\n## Early life and education\n\nRichardson was born in New York City to a wealthy family; his father, a banker, and his mother, a philanthropist, provided an environment conducive to artistic pursuits. He attended Columbia University, where he studied architecture and engineering, graduating in 1860. After a brief period working for the railroad industry, he moved to Paris in 1865 to study at the École des Beaux‑Arts under the guidance of Professor Victor Baltard. His studies in France, combined with a subsequent year of research in Germany, exposed him to European historicist styles, particularly the Romanesque revival.\n\n---\n\n## Career\n\nReturning to the United States in 1867, Richardson established his practice in Boston, Massachusetts. His early commissions included residential projects and modest civic buildings, but his reputation grew rapidly when he was appointed architect for the Trinity Church in Boston (1880–1886), a flagship work that exemplified his mature style. In 1873, he relocated his office to New York City, where he designed a series of landmark structures, including:\n\n| Year | Project | Location |\n|------|---------|----------|\n| 1874 | Allegheny County Courthouse | Pittsburgh, PA |\n| 1877 | Marshall Field's Department Store | Chicago, IL |\n| 1882 | The John J. Patterson House | Brookline, MA |\n| 1884 | Masonic Temple | New York City, NY |\n| 1884 | Sibley, Lindsay & Curr (now the Houghton Hall) | Minneapolis, MN |\n\nRichardson's practice was notable for its rigorous use of local stone, attention to detail, and integration of sculpture into architectural elements. His collaborative approach frequently involved renowned artists such as Daniel Chester French and Augustus Saint-Gaudens.\n\n---\n\n## Architectural style\n\nRichardsonian Romanesque, the style most closely associated with Richardson, is defined by:\n\n- **Massive stone masonry** (typically sandstone or granite) with deep-cut arches.\n- **Asymmetrical composition** and complex rooflines.\n- **Deeply recessed windows** framed by heavy stone lintels.\n- **Rustic ornamentation** derived from medieval Romanesque motifs, but adapted to a modern civic context.\n\nThese elements combined to create structures that were both imposing and harmonious with their surroundings. Richardson’s work anticipated the later *American Romanesque* and influenced the emerging *Chicago School* of architects.\n\n---\n\n## Legacy\n\nRichardson died suddenly in 1886 at the age of 47, but his influence persisted. The *National Park Service* lists 20 of his buildings on the National Register of Historic Places, and many are preserved as part of America's architectural heritage. His students—including John J. R. D. W.—continued to propagate his design principles, ensuring that Richardsonian Romanesque remained a staple of American civic architecture into the 20th century.\n\nThe *H. H. Richardson School* in Boston and the *Richardson House* in New York City stand as tributes to his legacy, while his design philosophy is taught in architectural schools worldwide. In 1985, the *American Institute of Architects* awarded him posthumously the *AIA Gold Medal* for his profound contributions to architecture.\n\n---\n\n## Notable works\n\n- **Trinity Church, Boston** (1880–1886) – now a National Historic Landmark.\n- **Allegheny County Courthouse, Pittsburgh** (1873–1878) – the model for many later Romanesque public buildings.\n- **Marshall Field's Department Store, Chicago** (1877–1879) – precursor to modern retail architecture.\n- **Masonic Temple, New York City** (1884–1891) – exemplifies Richardson’s mastery of civic grandeur.\n\n---\n\n## References\n\nWhile this biography does not include inline citations, further information can be found in the following sources:\n\n- McAlester, Virginia & Lee, Lee (1994). *A Field Guide to American Houses.* Alfred A. Knopf.\n- Roth, Leland M. (2007). *American Architecture: A History.* Westview Press.\n- American Institute of Architects. (1985). *AIA Gold Medal Awardees.* AIA Press.\n\n---\n\n**Categories:** 1838 births | 1886 deaths | American architects | 19th-century American architects | Architects from New York City | Architects from Boston | National Register of Historic Places in Boston | National Register of Historic Places in Pittsburgh | American Romanesque Revival architecture | American historic preservationists | Harvard University alumni | Columbia University alumni | École des Beaux-Arts alumni | American expatriates in France | American expatriates in Germany",
+        "**Henry Hobson Richardson (1849 – 1903)** was an influential American architect whose work helped shape the architectural landscape of late‑19th‑century America.  \n\nBorn on July 9, 1849, in Newburyport, Massachusetts, Richardson was raised in a family of modest means but received a solid education, attending the Massachusetts Institute of Technology (MIT) before transferring to Harvard University, where he graduated in 1870. After a brief stint as a draftsman, he pursued architectural studies in Europe, spending time in Berlin and studying under the famed German architect Karl Friedrich Schinkel, which profoundly affected his stylistic development.\n\nRichardson returned to the United States in the early 1870s and established his own practice in Boston. In the 1880s he moved his office to New York City, where he quickly became one of the most sought‑after architects for public buildings. He pioneered the **Richardsonian Romanesque** style—an adaptation of medieval Romanesque architecture that emphasized robust masonry, rounded arches, and intricate stonework. His designs were notable for their rhythmic massing, dramatic silhouettes, and use of textured stone surfaces, which conveyed a sense of permanence and gravitas.\n\nSome of Richardson’s most celebrated works include:\n\n| Year | Project | Location | Significance |\n|------|---------|----------|--------------|\n| 1876 | **Library of Congress (Washington, D.C.)** – Original design (uncompleted) | Washington, D.C. | Early exploration of monumental civic architecture |\n| 1878‑1885 | **Allegheny County Courthouse** | Pittsburgh, Pennsylvania | Early example of Richardsonian Romanesque in a civic context |\n| 1882‑1885 | **Trinity Church** | Boston, Massachusetts | Masterwork of ecclesiastical architecture; renowned for its soaring nave and intricate stone carving |\n| 1885‑1887 | **Palladium Theatre** (later the \"Palladium of the Arts\") | Boston, Massachusetts | Landmark of theatrical architecture and Richardson's last major commission |\n| 1886‑1889 | **Marshall Field's Department Store** (later the \"Marshall Field & Co. Building\") | Chicago, Illinois | Demonstrated Richardson’s versatility in commercial architecture |\n| 1889‑1892 | **William R. Grace Building** | New York City, New York | Early skyscraper incorporating Richardsonian elements |\n\nRichardson’s influence extended beyond his built works. He was a prolific writer on architecture, publishing essays such as *\"The Architecture of the Romanesque\"* (1887), which articulated his theoretical approach to form and material. His mentorship of younger architects, including John Calvin Stevens and Cass Gilbert, helped disseminate the Richardsonian Romanesque ethos across the country.\n\nRichardson died of heart failure on February 7, 1903, in New York City, at the age of 53. His legacy endures in the countless buildings that still stand across the United States, many of which are listed on the National Register of Historic Places. His blend of robust craftsmanship, innovative use of materials, and contextual sensitivity established a lasting template for American public architecture."
+      ],
+      "num_sentences": 25,
+      "scores": {
+        "unigram": {
+          "sentence_scores": [
+            1.0,
+            1.0,
+            0.3167,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.3493,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.3493,
+            0.2841,
+            1.0,
+            1.0,
+            0.2841,
+            1.0,
+            0.0
+          ],
+          "passage_score": 0.8233
+        },
+        "prompt": {
+          "sentence_scores": [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5
+          ],
+          "passage_score": 0.5
+        },
+        "nli": {
+          "sentence_scores": [
+            0.0195,
+            0.0097,
+            0.5514,
+            0.1246,
+            0.1502,
+            0.1044,
+            0.0084,
+            0.0106,
+            0.2016,
+            0.1247,
+            0.0263,
+            0.1485,
+            0.05,
+            0.0694,
+            0.0152,
+            0.07,
+            0.7066,
+            0.2594,
+            0.0651,
+            0.0314,
+            0.0918,
+            0.2036,
+            0.1063,
+            0.1458,
+            0.1532
+          ],
+          "passage_score": 0.1379
+        }
+      }
+    }
+  ]
+}
